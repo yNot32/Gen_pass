@@ -25,6 +25,7 @@ def input_password():
     password = generate_password(length, use_digits, use_symbols, use_uppercase)
     print(f"Згенерований пароль: {password}")
     
+    
 input_password()
     
     
