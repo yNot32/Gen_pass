@@ -26,6 +26,7 @@ def input_password():
     print(f"Згенерований пароль: {password}")
     
     
+    
 input_password()
     
     
