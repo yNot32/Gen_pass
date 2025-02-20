@@ -4,58 +4,6 @@ import bcrypt
 import sqlite3
 from cryptography.fernet import Fernet
 
-
-def main_menu():
-    while True:
-        print("\nМеню менеджера паролів")
-        print("1. Згенерувати новий пароль")
-        print("2. Зберегти новий пароль")
-        print("3. Перевірити пароль")
-        print("4. Переглянути збережені облікові записи")
-        print("5. Видалити пароль")
-        print("6. Вийти")
-        
-        choice = input("Виберіть опцію (1-6):")
-        
-        if choice == 1:
-            length = int(input("Введіть довжину пароля: "))
-            use_digits = input("Використовувати цифри? (так/ні): ").lower() == 'так'
-            use_symbols = input("Використовувати символи? (так/ні): ").lower() == 'так'
-            use_uppercase = input("Використовувати великі літери? (так/ні): ").lower() == 'так'
-            password = generate_password(length, use_digits, use_symbols, use_uppercase)
-            print(f"Згенерований пароль: {password}")
-        elif choice == '2':
-            service = input("Введіть назву сервісу: ")
-            username = input("Введіть ім'я користувача: ")
-            password = input("Введіть пароль: ")
-            hashed_password = hash_password(password)
-            save_password_to_db(service, username, hashed_password.decode())
-            save_password_to_file(service, username, hashed_password)
-        elif choice == '3':
-            service = input("Введіть назву сервісу: ")
-            username = input("Введіть ім'я користувача: ")
-            input_password = input("Введіть пароль для перевірки: ")
-            verify_password(service, username, input_password)
-
-        elif choice == '4':
-            list_saved_accounts()
-
-        elif choice == '5':
-            service = input("Введіть назву сервісу для видалення: ")
-            username = input("Введіть ім'я користувача для видалення: ")
-            delete_password(service, username)
-
-        elif choice == '6':
-            print("Вихід з програми.")
-            break
-
-        else:
-            print("Невірний вибір. Спробуйте ще раз.")
-
-if __name__ == "__main__":
-    main_menu()                
-    
-
 # Ініціалізація бази даних
 def init_db():
     conn = sqlite3.connect("passwords.db")
@@ -214,3 +162,62 @@ def decrypt_password(encrypted_password):
 
 # Ініціалізація бази даних
 init_db()
+
+# Ваш існуючий код (всі функції)
+
+# Ініціалізація бази даних
+init_db()
+
+# Функція для відображення головного меню
+def main_menu():
+    while True:
+        print("\nМеню менеджера паролів")
+        print("1. Згенерувати новий пароль")
+        print("2. Зберегти новий пароль")
+        print("3. Перевірити пароль")
+        print("4. Переглянути збережені облікові записи")
+        print("5. Видалити пароль")
+        print("6. Вийти")
+
+        choice = input("Виберіть опцію (1-6): ")
+
+        if choice == '1':
+            length = int(input("Введіть довжину пароля: "))
+            use_digits = input("Використовувати цифри? (+/-): ").lower() == '+'
+            use_symbols = input("Використовувати символи? (+/-): ").lower() == '+'
+            use_uppercase = input("Використовувати великі літери? (+/-): ").lower() == '+'
+            password = generate_password(length, use_digits, use_symbols, use_uppercase)
+            print(f"Згенерований пароль: {password}")
+
+        elif choice == '2':
+            service = input("Введіть назву сервісу: ")
+            username = input("Введіть ім'я користувача: ")
+            password = input("Введіть пароль: ")
+            hashed_password = hash_password(password)
+            save_password_to_db(service, username, hashed_password.decode())
+            save_password_to_file(service, username, hashed_password)
+
+        elif choice == '3':
+            service = input("Введіть назву сервісу: ")
+            username = input("Введіть ім'я користувача: ")
+            input_password = input("Введіть пароль для перевірки: ")
+            verify_password(service, username, input_password)
+
+        elif choice == '4':
+            list_saved_accounts()
+
+        elif choice == '5':
+            service = input("Введіть назву сервісу для видалення: ")
+            username = input("Введіть ім'я користувача для видалення: ")
+            delete_password(service, username)
+
+        elif choice == '6':
+            print("Вихід з програми.")
+            break
+
+        else:
+            print("Невірний вибір. Спробуйте ще раз.")
+
+# Запуск програми
+if __name__ == "__main__":
+    main_menu()
