@@ -107,6 +107,65 @@ def input_password():
             print("Невірний варіант.")
     except Exception as e:
         print(f"Произошла ошибка: {e}")
+        
+# Функция проверки пароля (аутентификация)
+def verify_password(service, username, input_password):
+    try:
+        with sqlite3.connect("password.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT hashed_password FROM passwords WHERE service = ? AND username = ?
+            """, (service, username))
+            result = cursor.fetchone
+            
+            if result is None:
+                print("Обліковий запис не знайдено. ")
+                return False
+            
+            stored_hashed_password = result[0].encode()
+            if bcrypt.checkpw(input_password.encode(), stored_hashed_password):
+                print("Пароль вірний. ")
+                return True
+            else:
+                print("Неправильний пароль. ")
+                return False
+    except sqlite3.Error as e:
+        print(f"Помилка при перевірці пароля: {e}") 
+        return False
+    
+#Просмотр сохранённых паролей (безопасно)                        
+def list_saved_account():
+    try:
+        with sqlite3.connect("password.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT service, username FROM passwords")
+            accounts = cursor.fetchone
+            
+            if not accounts:
+                print("Збережених облікових записів немає.")
+                return
+            
+            print("\n Збережені облікові запсии: ")
+            for service, username, in accounts:
+                print(f"Сервіс: {service}, Користувач: {username}")
+    except sqlite3.Error as e:
+        print(f"Помилка при отриманні списку аккаунтів: {e}")
+        
+#Удаление паролей из базы данных
+def delete_password(service, username):
+    try:
+        with sqlite3.connect("pasword.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(""" DELE FROM password WHERE service = ? AND username = ?""", (service, username))
+            conn.commit
+            
+            if cursor.rowcount > 0:
+                print("Пароль успішно видалено. ")
+            else:
+                print("Запис не знайдено. ")
+    except sqlite3.Error as e:
+        print(f"Помилка при видаленні пароля: {e}")                                    
+            
             
     
 init_db()
